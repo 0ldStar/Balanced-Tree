@@ -7,12 +7,13 @@
 
 #include <iostream>
 #include <string>
+#include "BSTree.h"
 #include "Node.h"
 #include "BTreeStraightIterator.h"
 #include "BTreeBackIterator.h"
 
 template<typename T>
-class BTree {
+class BTree : public BSTree<T> {
 public:
     BTree();
 
@@ -20,38 +21,17 @@ public:
 
     ~BTree();
 
-    unsigned getSize();
-
-    bool isEmpty();
-
     void clear();
-
-    T &operator[](INT_64 key);
 
     bool push(INT_64 key, T data);
 
     bool pop(INT_64 key);
 
-    BTreeStraightIterator<T> begin();
-
-    BTreeStraightIterator<T> end();
-
-    BTreeBackIterator<T> rbegin();
-
-    BTreeBackIterator<T> rend();
-
-    void printStructure();
-
-    unsigned getLaboriousness();
 
 private:
     Node<T> *R(Node<T> *node);
 
-    Node<T> *LR(Node<T> *node);
-
     Node<T> *L(Node<T> *node);
-
-    Node<T> *RL(Node<T> *node);
 
     Node<T> *insert(Node<T> *p, INT_64 k, T data, int layer);
 
@@ -71,15 +51,6 @@ private:
 
     void destruct(Node<T> *t);
 
-    void checkLayer(Node<T> *p, unsigned layer);
-
-    T getDefaultValue();
-
-    Node<T> *root;
-    unsigned size;
-    unsigned laboriousness;
-    T defaultValue;
-    unsigned maxLayer;
 };
 
 

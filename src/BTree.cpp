@@ -5,24 +5,23 @@
 #include "BTree.h"
 
 template<typename T>
-BTree<T>::BTree() {
-    root = nullptr;
-    size = 0;
-    laboriousness = 0;
-    maxLayer = 0;
+BTree<T>::BTree() : BSTree<T>() {
 }
 
 template<typename T>
+BTree<T>::BTree(BTree &other) : BSTree<T>(other) {}
+
+template<typename T>
 BTree<T>::~BTree() {
-    destruct(root);
+    destruct(BSTree<T>::root);
 }
 
 template<typename T>
 void BTree<T>::clear() {
-    destruct(root);
-    size = 0;
-    laboriousness = 0;
-    maxLayer = 0;
+    destruct(BSTree<T>::root);
+    BSTree<T>::elementCount = 0;
+    BSTree<T>::laboriousness = 0;
+    BSTree<T>::maxLayer = 0;
 }
 
 template<typename T>
@@ -38,121 +37,18 @@ void BTree<T>::destruct(Node<T> *t) {
 
 template<typename T>
 bool BTree<T>::push(INT_64 key, T data) {
-    root = insert(root, key, data, 0);
-    size++;
+    BSTree<T>::laboriousness = 0;
+    BSTree<T>::root = insert(BSTree<T>::root, key, data, 0);
+    BSTree<T>::elementCount++;
     return true;
 }
 
 template<typename T>
 bool BTree<T>::pop(INT_64 key) {
-    root = remove(root, key);
-    size--;
+    BSTree<T>::laboriousness = 0;
+    BSTree<T>::root = remove(BSTree<T>::root, key);
+    BSTree<T>::elementCount--;
     return false;
-}
-
-template<typename T>
-unsigned BTree<T>::getSize() { return size; }
-
-template<typename T>
-bool BTree<T>::isEmpty() { return size == 0; }
-
-template<typename T>
-unsigned BTree<T>::getLaboriousness() { return laboriousness; }
-
-template<typename T>
-T &BTree<T>::operator[](INT_64 key) {
-    laboriousness = 0;
-    if (root) {
-        auto nodeList = new std::list<Node<T> *>();
-        Node<T> *top = root;
-        while (top != nullptr || !nodeList->empty()) {
-            if (top) {
-                if (key < top->key && top->left) {
-                    nodeList->push_front(top->left);
-                } else if (key > top->key && top->right) {
-                    nodeList->push_front(top->right);
-                } else if (top->key == key) {
-                    return top->data;
-                } else {
-                    break;
-                }
-                laboriousness++;
-            }
-            top = nodeList->back();
-            nodeList->pop_back();
-        }
-    }
-    defaultValue = getDefaultValue();
-    laboriousness = -1;
-    return defaultValue;
-
-}
-
-template<typename T>
-void BTree<T>::checkLayer(Node<T> *p, unsigned layer) {
-    if (!p) return;
-    checkLayer(p->left, layer + 1);
-    p->layer = layer;
-    if (layer > maxLayer) maxLayer = layer;
-    checkLayer(p->right, layer + 1);
-}
-
-template<typename T>
-void BTree<T>::printStructure() {
-    if (!root) return;
-    auto nodeList = new std::list<Node<T> *>();
-    Node<T> *top = root;
-    bool flag;
-    unsigned layer = -1;
-    bool firstElFlag = false;
-    maxLayer = 0;
-    checkLayer(root, 0);
-    std::cout << "Max layer: " << maxLayer << std::endl;
-    std::string buf;
-    char tmp[4];
-
-    do {
-        flag = false;
-        if (layer != top->layer) {
-            layer = top->layer;
-            buf.append("\n");
-            firstElFlag = true;
-        }
-        if (top->key != -1000 && firstElFlag) {
-            firstElFlag = false;
-            for (int i = 0; i < (1 << (maxLayer - layer)) - 1; ++i) {
-                buf.append("   ");
-            }
-        }
-        if (top->key == -1000) {
-            if (top->layer <= maxLayer)
-                buf.append("*  ");
-        } else {
-            sprintf(tmp, "%-3lld", top->key);
-            buf.append(tmp);
-            auto *nullNode = new Node<T>(-1000, getDefaultValue());
-            nullNode->layer = top->layer + 1;
-            if (top->left != nullptr) {
-                nodeList->push_back(top->left);
-            } else {
-                nodeList->push_back(nullNode);
-            }
-            if (top->right != nullptr) {
-                nodeList->push_back(top->right);
-            } else {
-                nodeList->push_back(nullNode);
-            }
-        }
-        for (int i = 0; i < (1 << (maxLayer - layer + 1)) - 1; ++i)
-            buf.append("   ");
-
-        if (!nodeList->empty()) {
-            top = nodeList->front();
-            nodeList->pop_front();
-            if (nodeList->empty()) flag = true;
-        }
-    } while (!nodeList->empty() || flag);
-    std::cout << buf << std::endl;
 }
 
 template<typename T>
@@ -170,6 +66,7 @@ Node<T> *BTree<T>::removeMin(Node<T> *p) {
 
 template<typename T>
 Node<T> *BTree<T>::remove(Node<T> *p, INT_64 k) {
+    BSTree<T>::laboriousness++;
     if (!p) return nullptr;
     if (k < p->key)
         p->left = remove(p->left, k);
@@ -207,6 +104,7 @@ void BTree<T>::fixHeight(Node<T> *p) {
 
 template<typename T>
 Node<T> *BTree<T>::insert(Node<T> *p, INT_64 k, T data, int layer) {
+    BSTree<T>::laboriousness++;
     if (!p) return new Node<T>(k, data, layer);
     if (k < p->key)
         p->left = insert(p->left, k, data, layer + 1);
@@ -217,6 +115,7 @@ Node<T> *BTree<T>::insert(Node<T> *p, INT_64 k, T data, int layer) {
 
 template<typename T>
 Node<T> *BTree<T>::balance(Node<T> *p) {
+    BSTree<T>::laboriousness++;
     fixHeight(p);
     if (bfactor(p) == 2) {
         if (bfactor(p->right) < 0)
@@ -242,29 +141,6 @@ Node<T> *BTree<T>::R(Node<T> *p) {
 }
 
 template<typename T>
-Node<T> *BTree<T>::LR(Node<T> *node) {
-    Node<T> *x = node->left;
-    Node<T> *y = x->right;
-    x->right = y->left;
-    y->left = x;
-    node->left = y->right;
-    y->right = node;
-    if (y->height == -1) {
-        node->height = 1;
-        x->height = 0;
-    }
-    if (y->height == 0) {
-        node->height = x->height = 0;
-    }
-    if (y->height == 1) {
-        node->height = 0;
-        x->height = -1;
-    }
-    y->height = 0;
-    return y;
-}
-
-template<typename T>
 Node<T> *BTree<T>::L(Node<T> *q) {
     Node<T> *p = q->right;
     q->right = p->left;
@@ -273,61 +149,6 @@ Node<T> *BTree<T>::L(Node<T> *q) {
     fixHeight(p);
     return p;
 }
-
-template<typename T>
-Node<T> *BTree<T>::RL(Node<T> *node) {
-    Node<T> *x = node->left;
-    Node<T> *y = x->right;
-    x->right = y->left;
-    y->left = x;
-    node->left = y->right;
-    y->right = node;
-    if (y->height == -1) {
-        node->height = 1;
-        x->height = 0;
-    }
-    if (y->height == 0) {
-        node->height = x->height = 0;
-    }
-    if (y->height == 1) {
-        node->height = 0;
-        x->height = -1;
-    }
-    y->height = 0;
-    return y;
-}
-
-template<typename T>
-BTreeStraightIterator<T> BTree<T>::begin() {
-    return BTreeStraightIterator<T>(root, size, 0);
-}
-
-template<typename T>
-BTreeStraightIterator<T> BTree<T>::end() {
-    return BTreeStraightIterator<T>(root, size, -1);
-}
-
-template<typename T>
-BTreeBackIterator<T> BTree<T>::rbegin() {
-    return BTreeBackIterator<T>(root, size, size - 1);
-}
-
-template<typename T>
-BTreeBackIterator<T> BTree<T>::rend() {
-    return BTreeBackIterator<T>(root, size, -1);
-}
-
-template<>
-int BTree<int>::getDefaultValue() { return 0; }
-
-template<>
-char BTree<char>::getDefaultValue() { return ' '; }
-
-template<>
-float BTree<float>::getDefaultValue() { return 0.0; }
-
-template<>
-INT_64 BTree<INT_64>::getDefaultValue() { return 0; }
 
 template
 class BTree<int>;

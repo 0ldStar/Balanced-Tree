@@ -35,8 +35,6 @@ void test_rand(int n) {
         tree.push(m[i], 1);
     }
 
-//    cout << "Items count: " << tree.getLength() << endl;
-
     double I = 0;
     double D = 0;
     double S = 0;
@@ -89,8 +87,8 @@ void test_ord(int n) {
         m[i] = i * 10000;
         tree.push(m[i], 1);
     }
+    outputFile << n << " ";
 
-//    cout << "Items count: " << tree.getLength() << endl;
 
     double I = 0;
     double D = 0;

@@ -3,7 +3,7 @@
 //
 #include "menu.h"
 
-#define START_LENGTH 10
+#define START_LENGTH 5
 extern BTree<int> bTree;
 
 void printFillMenu() {
@@ -105,7 +105,7 @@ void straightIterMenu() {
                 unsigned step;
                 std::cout << "Enter step: ";
                 std::cin >> step;
-                if (step > 0 && step < bTree.getSize()) {
+                if (step > 0 && step < bTree.getLength()) {
                     iter = bTree.begin();
                     for (unsigned i = 0; i < step; ++i) iter++;
                 } else {
@@ -113,7 +113,7 @@ void straightIterMenu() {
                 }
                 break;
             case 3:
-                if (iter.getInd() >= 0 && iter.getInd() != bTree.getSize() - 1) {
+                if (iter.getInd() >= 0 && iter.getInd() != bTree.getLength() - 1) {
                     iter++;
                 } else {
                     std::cout << "[Error] Bad iterator" << std::endl;
@@ -174,7 +174,7 @@ void backIterMenu() {
                 unsigned step;
                 std::cout << "Enter step: ";
                 std::cin >> step;
-                if (step > 0 && step < bTree.getSize()) {
+                if (step > 0 && step < bTree.getLength()) {
                     iter = bTree.rbegin();
                     for (unsigned i = 0; i < step; ++i) iter++;
                 } else {
@@ -189,7 +189,7 @@ void backIterMenu() {
                 }
                 break;
             case 4:
-                if (iter.getInd() >= 0 && iter.getInd() != bTree.getSize() - 1) {
+                if (iter.getInd() >= 0 && iter.getInd() != bTree.getLength() - 1) {
                     iter--;
                 } else {
                     std::cout << "[Error] Bad iterator" << std::endl;

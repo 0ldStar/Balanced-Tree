@@ -4,6 +4,7 @@
 BTree<int> bTree;
 BTree<int> other;
 using namespace std;
+
 int main() {
     ofstream myfile;
     system("clear");
@@ -34,13 +35,13 @@ int main() {
                 printFillMenu();
                 break;
             case 2:
-                cout << "List len = " << bTree.getSize() << endl;
+                cout << "BTree len = " << bTree.getLength() << endl;
                 break;
             case 3:
                 if (!bTree.isEmpty())
                     bTree.clear();
                 else
-                    cout << "List is empty." << endl;
+                    cout << "BTree is empty." << endl;
                 break;
             case 4:
                 cout << "Is bTree empty? " << (bTree.isEmpty() ? "True" : "False") << endl;
@@ -49,52 +50,52 @@ int main() {
                 if (!bTree.isEmpty())
                     getElementMenu();
                 else
-                    cout << "List is empty." << endl;
+                    cout << "BTree is empty." << endl;
                 break;
             case 6:
                 if (!bTree.isEmpty())
                     fillValue();
                 else
-                    cout << "List is empty." << endl;
+                    cout << "BTree is empty." << endl;
                 break;
             case 7:
                 if (!bTree.isEmpty())
                     deleteValue();
                 else
-                    cout << "List is empty." << endl;
+                    cout << "BTree is empty." << endl;
                 break;
-            case 10:
+            case 8:
                 if (!bTree.isEmpty())
                     bTree.printStructure();
                 else
-                    cout << "List is empty." << endl;
+                    cout << "BTree is empty." << endl;
                 break;
-            case 11:
+            case 9:
                 if (!bTree.isEmpty())
                     cout << "Laboriousness: " << bTree.getLaboriousness() << endl;
                 else
-                    cout << "List is empty." << endl;
+                    cout << "BTree is empty." << endl;
                 break;
-            case 12:
+            case 10:
                 if (!bTree.isEmpty())
                     straightIterMenu();
                 else
-                    cout << "List is empty." << endl;
+                    cout << "BTree is empty." << endl;
                 break;
-            case 13:
+            case 11:
                 if (!bTree.isEmpty())
                     backIterMenu();
                 else
-                    cout << "List is empty." << endl;
+                    cout << "BTree is empty." << endl;
                 break;
-            case 15:
-                myfile.open ("../Rand1.txt", ios::trunc);
+            case 12:
+                myfile.open("../Rand1.txt", ios::trunc);
                 myfile.close();
 
-                myfile.open ("../Rand2.txt", ios::trunc);
+                myfile.open("../Rand2.txt", ios::trunc);
                 myfile.close();
 
-                for (int i = 1; i < 100000; i*=10) {
+                for (int i = 1; i < 100000; i *= 10) {
                     test_rand(i);
                     test_ord(i);
                 }

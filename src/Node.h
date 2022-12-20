@@ -21,9 +21,17 @@ struct Node {
         height = 0;
     };
 
+    Node(T _data, INT_64 _key, Node *_parent, unsigned _layer) : data(_data), key(_key), right(nullptr), left(nullptr),
+                                                                 parent(_parent), layer(_layer) {};
+
+    Node(T _data, INT_64 _key, Node *_parent, Node *_left, Node *_right, unsigned _layer) : data(_data), key(_key),
+                                                                                            right(_right), left(_left),
+                                                                                            parent(_parent),
+                                                                                            layer(_layer) {};
     INT_64 key;
     Node *right;
     Node *left;
+    Node *parent;
     int height;
     unsigned layer;
     T data;
